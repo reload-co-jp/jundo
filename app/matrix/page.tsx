@@ -10,7 +10,7 @@ export default function MatrixPage() {
   const [yAxis, setYAxis] = useState<RankingAxis>("urgency")
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex gap-6 items-end">
         <div>
           <label className="text-xs text-gray-400 block mb-1">X軸（横）</label>

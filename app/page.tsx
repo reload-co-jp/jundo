@@ -27,7 +27,7 @@ export default function InboxPage() {
   if (loading) return <div className="text-gray-400 text-sm">Loading...</div>
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       <TaskForm onSubmit={handleCreate} />
       {tasks.length === 0 ? (
         <p className="text-gray-500 text-sm text-center py-12">タスクなし</p>

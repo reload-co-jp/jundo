@@ -17,7 +17,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
         <Navigation />
-        <main className="max-w-2xl mx-auto px-4 py-6">{children}</main>
+        <main className="max-w-5xl mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   )

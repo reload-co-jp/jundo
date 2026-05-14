@@ -24,10 +24,10 @@ export default function ArchivePage() {
   const archived = tasks.filter((t) => t.status === "archived")
 
   if (tasks.length === 0)
-    return <p className="text-gray-500 text-sm text-center py-12">なし</p>
+    return <p className="max-w-2xl mx-auto text-gray-500 text-sm text-center py-12">なし</p>
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6">
       {completed.length > 0 && (
         <section>
           <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
