@@ -1,0 +1,45 @@
+services:
+  jundo-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: jundo
+      POSTGRES_USER: jundo
+      POSTGRES_PASSWORD: jundo
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jundo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  jundo-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://jundo:jundo@jundo-db:5432/jundo
+      PORT: "3001"
+    ports:
+      - "3001:3001"
+    depends_on:
+      jundo-db:
+        condition: service_healthy
+
+  jundo-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        API_URL: http://jundo-api:3001
+    environment:
+      API_URL: http://jundo-api:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - jundo-api
+
+volumes:
+  db_data:

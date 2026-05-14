@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  output: "export",
-  basePath: process.env.NODE_ENV === "production" ? "/page" : "",
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
+  output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.API_URL ?? "http://localhost:3001"}/api/:path*`,
+      },
+    ]
   },
 }
 

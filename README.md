@@ -1,94 +1,378 @@
-# Next.js Static Site Template
+# Jundo SPEC.md
 
-Next.js 16 + React 19 + TypeScript を使用した静的サイト生成のテンプレートリポジトリです。GitHub Pages へのデプロイが自動化されています。
+## Overview
 
-## 技術スタック
+Jundo は「順位」で整理する Todo アプリ。
 
-- **Next.js** 16 - App Router / Static Export
-- **React** 19
-- **TypeScript** 5
-- **ESLint** 9 - Flat Config
-- **Prettier** 3
+一般的な Todo アプリのように、
 
-## このテンプレートの使い方
+- 重要度: 5
+- 緊急度: 3
+- 優先度: 8
 
-1. **「Use this template」ボタン**をクリックして新しいリポジトリを作成
-2. リポジトリをクローン
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-   cd YOUR_REPO
-   ```
-3. 依存関係をインストール
-   ```bash
-   pnpm install
-   ```
-4. 開発サーバーを起動
-   ```bash
-   pnpm dev
-   ```
+のような絶対値スコアを入力するのではなく、
 
-## セットアップ後にやること
+> 「どちらをより先にやりたいか」
 
-### 1. `next.config.js` の修正
+という相対比較・順位付けによってタスクを管理する。
 
-`basePath` をリポジトリ名に変更してください：
+複数の軸で順位を管理し、その結果を二次元グラフとして可視化することで、
+「今何をやるべきか」を直感的に判断できることを目的とする。
 
-```js
-basePath: process.env.NODE_ENV === "production" ? "/YOUR_REPO_NAME" : "",
-```
+---
 
-### 2. `app/layout.tsx` の修正
+# Concept
 
-メタデータとサイト情報を更新してください：
+## Core Philosophy
 
-```tsx
-export const metadata: Metadata = {
-  title: "Your Site Title",
-  description: "Your site description",
+人間は絶対評価より相対評価が得意である。
+
+Jundo は、
+
+- 点数を付ける
+- 数値化する
+- KPI化する
+
+のではなく、
+
+- 並び替える
+- 比較する
+- 優先順位を決める
+
+ことでタスクを整理する。
+
+---
+
+# Target Users
+
+- Todo が肥大化して困っている人
+- 優先順位付けが苦手な人
+- 「やりたいこと」と「やるべきこと」の整理をしたい人
+- GTD やタスク管理に疲れた人
+- 視覚的にタスクを整理したい人
+- 思考整理をしたい人
+
+---
+
+# Core Features
+
+## 1. Task Management
+
+ユーザーはタスクを登録できる。
+
+### Task Fields
+
+```ts
+type Task = {
+  id: string
+  title: string
+  description?: string
+
+  status:
+    | "active"
+    | "completed"
+    | "archived"
+
+  createdAt: string
+  updatedAt: string
 }
 ```
 
-### 3. GitHub Pages の設定
+---
 
-1. リポジトリの **Settings** → **Pages** へ移動
-2. **Source** を「GitHub Actions」に設定
+# Ranking Axes
 
-## ディレクトリ構成
+Jundo の基本軸は3つ。
 
+| Axis | Meaning |
+|---|---|
+| want | やりたい順 |
+| must | やるべき順 |
+| urgency | 急ぎ順 |
+
+---
+
+# Rank-based Management
+
+数値入力は禁止。
+
+順位のみ管理する。
+
+## Example
+
+```text
+Want Ranking
+
+1. Todoアプリを作る
+2. 温泉旅行
+3. 英語学習
+4. ジム
 ```
-.
-├── app/
-│   ├── layout.tsx      # ルートレイアウト
-│   ├── page.tsx        # ホームページ
-│   └── reset.css       # CSSリセット
-├── .github/
-│   └── workflows/
-│       ├── lint.yml    # リント自動実行
-│       └── deploy.yml  # GitHub Pages 自動デプロイ
-├── next.config.js      # Next.js 設定
-├── tsconfig.json       # TypeScript 設定
-├── eslint.config.mjs   # ESLint 設定
-└── .prettierrc.json    # Prettier 設定
+
+順位はドラッグ＆ドロップで変更する。
+
+---
+
+# Matrix Visualization
+
+任意の2軸を選択し、
+タスクを二次元グラフとして表示する。
+
+## Example
+
+```text
+X: Want
+Y: Urgency
 ```
 
-## スクリプト
+---
 
-| コマンド | 説明 |
-|---------|------|
-| `pnpm dev` | 開発サーバーを起動 |
-| `pnpm build` | 静的サイトをビルド（`/out` に出力） |
-| `pnpm lint` | ESLint を実行 |
-| `pnpm format` | Prettier でコードをフォーマット |
-| `pnpm typecheck` | TypeScript の型チェック |
+# Matrix Examples
 
-## 機能
+## Want × Urgency
 
-- **静的サイト生成** - `next build` で `/out` に HTML を出力
-- **自動デプロイ** - main ブランチへの push で GitHub Pages に自動デプロイ
-- **自動リント** - push 時に ESLint / Prettier チェックを実行
-- **依存関係の自動更新** - Dependabot による週次チェック
-- **エディタ設定** - VS Code での自動フォーマット設定済み
+| Area | Meaning |
+|---|---|
+| Want High / Urgency High | 今すぐやる |
+| Want High / Urgency Low | 長期的に育てる |
+| Want Low / Urgency High | 片付ける |
+| Want Low / Urgency Low | 後回し |
 
-## ライセンス
+---
 
-ISC
+## Must × Want
+
+| Area | Meaning |
+|---|---|
+| Must High / Want High | 最優先 |
+| Must High / Want Low | 義務タスク |
+| Must Low / Want High | 趣味・探求 |
+| Must Low / Want Low | 保留候補 |
+
+---
+
+# UI Structure
+
+```text
+/
+├── Inbox
+├── Rankings
+│   ├── Want
+│   ├── Must
+│   └── Urgency
+├── Matrix
+├── Archive
+└── Settings
+```
+
+---
+
+# Tech Stack
+
+Jundo はサーバー上で動作する Web アプリとして構築する。
+
+## Frontend
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- PWA 対応
+
+## Backend
+
+- Fastify
+- TypeScript
+- REST API
+
+## Database
+
+- PostgreSQL
+- Prisma ORM
+
+## Infrastructure
+
+- Docker
+- Docker Compose
+- VPS または Cloud Run / Render / Fly.io 等にデプロイ可能な構成
+
+---
+
+# System Architecture
+
+```text
+Browser / PWA
+  ↓
+Next.js Frontend
+  ↓
+Fastify API
+  ↓
+PostgreSQL
+```
+
+---
+
+# Docker Services
+
+```text
+jundo-web      Next.js frontend
+jundo-api      Fastify backend
+jundo-db       PostgreSQL
+```
+
+---
+
+# Data Model
+
+## users
+
+```ts
+type User = {
+  id: string
+  email: string
+  name?: string
+  createdAt: string
+  updatedAt: string
+}
+```
+
+## tasks
+
+```ts
+type Task = {
+  id: string
+  userId: string
+  title: string
+  description?: string
+  status: "active" | "completed" | "archived"
+  createdAt: string
+  updatedAt: string
+}
+```
+
+## rankings
+
+```ts
+type Ranking = {
+  id: string
+  userId: string
+  axis: "want" | "must" | "urgency"
+  orderedTaskIds: string[]
+  createdAt: string
+  updatedAt: string
+}
+```
+
+---
+
+# Sync
+
+PC とモバイルは同じサーバー API を通じて同期する。
+
+## Behavior
+
+- タスク作成時に API 経由で保存
+- 並び替え時に ranking を保存
+- 画面表示時に最新データを取得
+- MVPではリアルタイム同期は必須にしない
+- 競合解決は Last Write Wins とする
+
+---
+
+# API
+
+## Tasks
+
+```http
+GET /api/tasks
+POST /api/tasks
+PATCH /api/tasks/:id
+DELETE /api/tasks/:id
+```
+
+## Rankings
+
+```http
+GET /api/rankings
+PUT /api/rankings/:axis
+```
+
+## Matrix
+
+```http
+GET /api/matrix?x=want&y=urgency
+```
+
+---
+
+# Matrix Calculation
+
+順位を座標に変換する。
+
+```ts
+score = 1 - ((rank - 1) / (total - 1))
+```
+
+例:
+
+| Rank | Score |
+|---|---|
+| 1 | 1.0 |
+| middle | 0.5 |
+| last | 0.0 |
+
+---
+
+# MVP Scope
+
+## Included
+
+- タスク作成
+- タスク編集
+- 完了・アーカイブ
+- Want / Must / Urgency の3軸順位管理
+- ドラッグ&ドロップ並び替え
+- 2軸マトリクス表示
+- PC / モバイル同期
+- Docker Compose によるローカル起動
+
+## Excluded
+
+- AI機能
+- チーム共有
+- 通知
+- カレンダー連携
+- リアルタイム共同編集
+- モバイルネイティブアプリ
+
+---
+
+# Branding
+
+## Name
+
+Jundo
+
+Derived from:
+
+- 順 (Jun)
+- Do
+
+Meaning:
+
+> やる順を決める
+
+---
+
+# Taglines
+
+## Japanese
+
+- タスクを、順番で考える。
+- やる順を決める。
+- 順位で整理するTodo。
+
+## English
+
+- Rank your tasks.
+- Think less. Rank first.
+- A relative-priority todo app.
